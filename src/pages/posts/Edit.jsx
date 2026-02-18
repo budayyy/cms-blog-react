@@ -1,25 +1,41 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Navbar from "../../components/Navbar";
 import api from "../../api";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
-export default function CreatePost() {
+export default function EditPost() {
+  const { id } = useParams();
   const navigate = useNavigate();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [author, setAuthor] = useState("");
 
-  const handleSubmitCreate = async (e) => {
+  useEffect(() => {
+    getPostById();
+  }, []);
+
+  async function getPostById() {
+    const response = await api.get(`/posts/${id}`);
+    const post = response.data.data;
+
+    console.log(post);
+
+    setTitle(post.title);
+    setContent(post.content);
+    setAuthor(post.author);
+  }
+
+  const handleSubmitEdit = async (e) => {
     e.preventDefault();
 
-    const response = await api.post("/posts", {
+    const response = await api.put(`/posts/${id}`, {
       title,
       content,
       author,
     });
 
     if (response.status === 200) {
-      alert("Post created successfully");
+      alert("Post updated successfully");
       setTitle("");
       setContent("");
       setAuthor("");
@@ -28,7 +44,7 @@ export default function CreatePost() {
         pathname: "/",
       });
     } else {
-      alert("Failed to create post");
+      alert("Failed to update post");
     }
   };
 
@@ -36,9 +52,9 @@ export default function CreatePost() {
     <>
       <Navbar />
       <main className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 mt-8">
-        <h1 className="text-2xl font-semibold text-center">Create Post</h1>
+        <h1 className="text-2xl font-semibold text-center">Edit Post</h1>
 
-        <form onSubmit={handleSubmitCreate}>
+        <form onSubmit={handleSubmitEdit}>
           <div className="mt-4">
             <label htmlFor="title">
               <span className="text-sm font-medium text-gray-700"> Title </span>
@@ -86,7 +102,7 @@ export default function CreatePost() {
               className="w-full rounded-sm border border-teal-600 bg-teal-600 px-12 py-3 text-sm font-medium text-white hover:bg-transparent hover:text-teal-600 hover:cursor-pointer"
               type="submit"
             >
-              Create Post
+              Edit Post
             </button>
           </div>
         </form>

@@ -1,31 +1,53 @@
-export default function Blog() {
-  return (
-    <article class="overflow-hidden rounded-lg shadow-sm transition hover:shadow-lg">
-      <img
-        alt=""
-        src="https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&amp;fit=crop&amp;q=80&amp;w=1160"
-        class="h-56 w-full object-cover"
-      />
+import { Link } from "react-router-dom";
+import api from "../api";
 
-      <div class="bg-white p-4 sm:p-6">
-        <time datetime="2022-10-10" class="block text-xs text-gray-500">
-          {" "}
-          10th Oct 2022{" "}
+export default function Blog({ post }) {
+  const handleDeletePost = async (id) => {
+    if (window.confirm("Are you sure you want to delete this post?")) {
+      const response = await api.delete(`/posts/${id}`);
+      if (response.status === 200) {
+        window.location.reload();
+      } else {
+        alert("Failed to delete post");
+      }
+    }
+  };
+
+  return (
+    <article className="overflow-hidden rounded-lg shadow-sm transition hover:shadow-lg p-2">
+      <div className="bg-white p-4 sm:p-6">
+        <time className="block text-xs text-gray-500">
+          {post.createdat
+            ? new Date(post.createdat).toLocaleDateString("id-ID", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })
+            : ""}
         </time>
 
         <a href="#">
-          <h3 class="mt-0.5 text-lg text-gray-900">
-            How to position your furniture for positivity
-          </h3>
+          <h3 className="mt-0.5 text-lg text-gray-900">{post.title}</h3>
         </a>
 
-        <p class="mt-2 line-clamp-3 text-sm/relaxed text-gray-500">
-          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Recusandae
-          dolores, possimus pariatur animi temporibus nesciunt praesentium
-          dolore sed nulla ipsum eveniet corporis quidem, mollitia itaque minus
-          soluta, voluptates neque explicabo tempora nisi culpa eius atque
-          dignissimos. Molestias explicabo corporis voluptatem?
+        <p className="mt-2 line-clamp-3 text-sm/relaxed text-gray-500">
+          {post.content}
         </p>
+      </div>
+
+      <div className="mt-2 flex items-center justify-end gap-4">
+        <Link
+          to={`/posts/${post.id}/edit`}
+          className="bg-yellow-600 text-white px-4 py-2 rounded text-sm font-semibold"
+        >
+          Edit
+        </Link>
+        <button
+          onClick={() => handleDeletePost(post.id)}
+          className="ml-2 bg-red-600 text-white px-4 py-2 rounded text-sm font-semibold"
+        >
+          Delete
+        </button>
       </div>
     </article>
   );

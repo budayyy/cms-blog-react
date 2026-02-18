@@ -4,6 +4,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import NotFound from "./pages/NotFound";
 import CreatePost from "./pages/posts/Create";
+import EditPost from "./pages/posts/Edit";
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
 
         {/* posts */}
         <Route path="posts/create" element={<CreatePost />} />
+        <Route path="posts/:id/edit" element={<EditPost />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
